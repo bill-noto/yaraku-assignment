@@ -18,7 +18,11 @@ class BooksController extends Controller
      */
     public function index()
     {
-        return Inertia::render('BooksIndex');
+        $books = Book::all();
+
+        return Inertia::render('BooksIndex', [
+            'books' => $books
+        ]);
     }
 
     /**
@@ -61,7 +65,7 @@ class BooksController extends Controller
      */
     public function show($id)
     {
-        $author = Book::find($id)->author->name;
+//        $author = Book::find($id)->author->name;
 
         return Inertia::render('BookShow', [
             'book' => Book::find($id),
