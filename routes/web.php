@@ -1,8 +1,7 @@
 <?php
 
-use Illuminate\Foundation\Application;
+use App\Http\Controllers\BooksController;
 use Illuminate\Support\Facades\Route;
-use Inertia\Inertia;
 
 /*
 |--------------------------------------------------------------------------
@@ -15,21 +14,14 @@ use Inertia\Inertia;
 |
 */
 
-Route::get('/', function () {
-    return Inertia::render('Welcome', [
-        'canLogin' => Route::has('login'),
-        'canRegister' => Route::has('register'),
-        'laravelVersion' => Application::VERSION,
-        'phpVersion' => PHP_VERSION,
-    ]);
-});
+/*
+ * Routes for books resource
+ */
 
-Route::middleware([
-    'auth:sanctum',
-    config('jetstream.auth_session'),
-    'verified',
-])->group(function () {
-    Route::get('/dashboard', function () {
-        return Inertia::render('Dashboard');
-    })->name('dashboard');
-});
+Route::get('/books', [BooksController::class, 'index'])->name('books');
+Route::get('/books/create', [BooksController::class, 'create'])->name('booksCreate');
+Route::post('/books', [BooksController::class, 'store']);
+Route::delete('/books/{id}', [BooksController::class, 'destroy']);
+Route::get('/books/{id}', [BooksController::class, 'show']);
+Route::get('/books/edit/{id}', [BooksController::class, 'edit']);
+Route::patch('/books/{id}', [BooksController::class, 'update']);
