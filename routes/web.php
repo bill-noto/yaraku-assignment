@@ -18,7 +18,7 @@ use Illuminate\Support\Facades\Route;
  * Routes for books resource
  */
 
-Route::get('/books', [BooksController::class, 'index'])->name('books');
+Route::get('/', [BooksController::class, 'index'])->name('books');
 Route::get('/books/create', [BooksController::class, 'create'])->name('booksCreate');
 Route::post('/books', [BooksController::class, 'store']);
 Route::delete('/books/{id}', [BooksController::class, 'destroy']);
