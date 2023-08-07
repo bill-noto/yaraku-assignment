@@ -1,12 +1,12 @@
 <script>
 import {defineComponent} from 'vue';
-import {Head, Link} from '@inertiajs/vue3';
+import {Head, Link, useForm} from '@inertiajs/vue3';
 import moment from 'moment';
 import {FontAwesomeIcon} from "@fortawesome/vue-fontawesome";
 import {library} from '@fortawesome/fontawesome-svg-core'
-import {faTrash, faEdit} from '@fortawesome/free-solid-svg-icons'
+import {faEdit, faEye, faTrash} from '@fortawesome/free-solid-svg-icons'
 
-library.add(faTrash, faEdit);
+library.add(faTrash, faEdit, faEye);
 
 export default defineComponent({
     components: {
@@ -16,24 +16,33 @@ export default defineComponent({
     },
     props: {
         books: Object,
+        authors: Object
     },
     data() {
         var date = new Date();
+        const form = useForm({
+            author_id: null,
+            title: null,
+        });
         return {
             year: date.getFullYear(),
+            form
         }
     },
     methods: {
         format(param) {
             return moment(String(param)).format('DD/MM/YYYY LT')
         },
-        delete_post(id) {
-            if (confirm('Are you sure you want to delete this post?')) {
-                this.$inertia.delete(`/posts/${id}`);
+        delete_book(id) {
+            if (confirm('Are you sure you want to delete this book?')) {
+                this.$inertia.delete(`/books/${id}`);
             }
         },
-        expand_post(id) {
-            this.$inertia.get(`/posts/${id}`);
+        expand_book(id) {
+            this.$inertia.get(`/books/${id}`);
+        },
+        edit_book(id) {
+            this.$inertia.get(`/books/edit/${id}`);
         }
     }
 })
@@ -43,7 +52,24 @@ export default defineComponent({
     <Head title="Books"/>
 
     <div class="my-4 flex justify-center items-center">
-        <div class="w-full flex justify-center items-center">
+        <div class="w-full flex flex-col justify-center items-center">
+            <div class="w-1/3">
+                <form @submit.prevent="submit()" class="mx-10 my-10 flex flex-col">
+                    <label for="title">Book to search for:</label>
+                    <input v-model="this.form.title" type="text"
+                           name="title" id="title"
+                           class="w-full h-12 p-1">
+                    <label for="author">Author to search for:</label>
+                    <select class="w-full h-12 p-1" v-model="this.form.author_id" name="author" id="author">
+                        <option v-for="author of authors" value="{{author.id}}">{{ author.name }}</option>
+                    </select>
+                    <button type="submit"
+                            class="inline-flex text-md transition-colors duration-200 focus:ring-2 focus:ring-offset-2 focus:ring-current focus:outline-none rounded-md text-white bg-blue-500 hover:bg-blue-700 px-4 py-2 w-1/3 mx-auto my-4">
+                        Submit
+                    </button>
+                </form>
+            </div>
+
             <table class="w-3/5 table-auto border border-black text-center">
                 <thead>
                 <tr>
@@ -57,10 +83,13 @@ export default defineComponent({
                     <td class="border border-black">{{ book.title }}</td>
                     <td class="border border-black">{{ book.author.name }}</td>
                     <td class="border border-black flex justify-around">
-                        <button>
+                        <button title="Expand Book" @click="expand_book(book.id)">
+                            <font-awesome-icon icon="fa-solid fa-eye"/>
+                        </button>
+                        <button title="Edit Book" @click="edit_book(book.id)">
                             <font-awesome-icon icon="fa-solid fa-edit"/>
                         </button>
-                        <button>
+                        <button title="Delete Book" @click="delete_book(book.id)">
                             <font-awesome-icon icon="fa-solid fa-trash"/>
                         </button>
                     </td>

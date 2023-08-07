@@ -12,34 +12,6 @@ class BooksController extends Controller
 {
 
     /**
-     * Display a listing of the resource.
-     *
-     * @return Response
-     */
-    public function index()
-    {
-        $books = Book::all();
-
-        return Inertia::render('BooksIndex', [
-            'books' => $books
-        ]);
-    }
-
-    /**
-     * Show the form for creating a new resource.
-     *
-     * @return Response
-     */
-    public function create()
-    {
-        $authors = Author::all();
-
-        return Inertia::render('BooksCreate', [
-            'authors' => $authors
-        ]);
-    }
-
-    /**
      * Store a newly created resource in storage.
      *
      * @param Request $request
@@ -58,17 +30,32 @@ class BooksController extends Controller
     }
 
     /**
-     * Display the specified resource.
+     * Show the form for creating a new resource.
      *
-     * @param int $id
      * @return Response
      */
-    public function show($id)
+    public function create()
     {
-//        $author = Book::find($id)->author->name;
+        $authors = Author::all();
 
-        return Inertia::render('BookShow', [
-            'book' => Book::find($id),
+        return Inertia::render('BooksCreate', [
+            'authors' => $authors
+        ]);
+    }
+
+    /**
+     * Display a listing of the resource.
+     *
+     * @return Response
+     */
+    public function index()
+    {
+        $books = Book::all();
+        $authors = Author::all();
+
+        return Inertia::render('BooksIndex', [
+            'books' => $books,
+            'authors'=> $authors
         ]);
     }
 
@@ -104,6 +91,47 @@ class BooksController extends Controller
         $book->update($request->all());
 
         return $this->show($id);
+    }
+
+    /**
+     * Display the specified resource.
+     *
+     * @param int $id
+     * @return Response
+     */
+    public function show($id)
+    {
+//        $author = Book::find($id)->author->name;
+
+        return Inertia::render('BookShow', [
+            'book' => Book::find($id),
+        ]);
+    }
+
+    /**
+     * Search for a resource by author or title and opens the resource
+     *
+     * @param Request $request
+     * @return Response
+     */
+    public function search(Request $request)
+    {
+        $bookToReturn = '';
+        $bookList = '';
+
+        if ($request->name) {
+            $bookToReturn = Book::findByName($request->name);
+
+            return Inertia::render('BookShow', [
+                'books' => $bookToReturn
+            ]);
+        } else {
+            $bookList = Book::findByAuthorId($request->authorId);
+
+            return Inertia::render('BookShow', [
+                'books' => $bookList
+            ]);
+        }
     }
 
     /**

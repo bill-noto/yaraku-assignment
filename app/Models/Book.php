@@ -11,6 +11,16 @@ class Book extends Model
 
     protected $with = ['author'];
 
+    public static function findByAuthorId($authorId)
+    {
+        return static::where('author_id', $authorId)->all();
+    }
+
+    public static function findByName($name)
+    {
+        return static::where('name', $name)->first();
+    }
+
     public function author()
     {
         return $this->belongsTo(Author::class);
