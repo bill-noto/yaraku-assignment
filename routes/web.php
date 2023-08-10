@@ -25,4 +25,4 @@ Route::delete('/books/{id}', [BooksController::class, 'destroy']);
 Route::get('/books/{id}', [BooksController::class, 'show']);
 Route::get('/books/edit/{id}', [BooksController::class, 'edit']);
 Route::patch('/books/{id}', [BooksController::class, 'update']);
-Route::get('/books/search', [BooksController::class, 'search']);
+Route::post('/books/search', [BooksController::class, 'search']);

@@ -11,14 +11,16 @@ class Book extends Model
 
     protected $with = ['author'];
 
-    public static function findByAuthorId($authorId)
+    protected $fillable = ['title', 'author_id'];
+
+    public function scopeByAuthorId($query, $authorId)
     {
-        return static::where('author_id', $authorId)->all();
+        return $query->where('author_id', $authorId);
     }
 
-    public static function findByName($name)
+    public function scopeByTitle($query, $title)
     {
-        return static::where('name', $name)->first();
+        return $query->where('title', $title);
     }
 
     public function author()

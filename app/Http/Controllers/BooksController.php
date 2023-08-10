@@ -17,11 +17,11 @@ class BooksController extends Controller
      * @param Request $request
      * @return Response
      */
-    public function store(Request $request)
+    public function store(Request $request): Response
     {
         $request->validate([
             'title' => 'required',
-            'authorId' => 'required'
+            'author_id' => 'required'
         ]);
 
         Book::create($request->all());
@@ -34,7 +34,7 @@ class BooksController extends Controller
      *
      * @return Response
      */
-    public function create()
+    public function create(): Response
     {
         $authors = Author::all();
 
@@ -48,14 +48,14 @@ class BooksController extends Controller
      *
      * @return Response
      */
-    public function index()
+    public function index(): Response
     {
         $books = Book::all();
         $authors = Author::all();
 
         return Inertia::render('BooksIndex', [
             'books' => $books,
-            'authors'=> $authors
+            'authors' => $authors
         ]);
     }
 
@@ -65,10 +65,13 @@ class BooksController extends Controller
      * @param int $id
      * @return Response
      */
-    public function edit($id)
+    public function edit(int $id): Response
     {
-        return Inertia::render('BookEdit', [
-            'book' => Book::find($id)
+        $authors = Author::all();
+
+        return Inertia::render('BooksEdit', [
+            'authors' => $authors,
+            'books' => Book::find($id),
         ]);
     }
 
@@ -79,11 +82,11 @@ class BooksController extends Controller
      * @param int $id
      * @return Response
      */
-    public function update(Request $request, $id)
+    public function update(Request $request, int $id): Response
     {
         $request->validate([
             'title' => 'required',
-            'authorId' => 'required'
+            'author_id' => 'required'
         ]);
 
         $book = Book::find($id);
@@ -99,12 +102,10 @@ class BooksController extends Controller
      * @param int $id
      * @return Response
      */
-    public function show($id)
+    public function show(int $id): Response
     {
-//        $author = Book::find($id)->author->name;
-
-        return Inertia::render('BookShow', [
-            'book' => Book::find($id),
+        return Inertia::render('BooksShow', [
+            'books' => Book::find($id),
         ]);
     }
 
@@ -114,22 +115,23 @@ class BooksController extends Controller
      * @param Request $request
      * @return Response
      */
-    public function search(Request $request)
+    public function search(Request $request): Response
     {
-        $bookToReturn = '';
-        $bookList = '';
+        $authors = Author::all();
 
         if ($request->name) {
-            $bookToReturn = Book::findByName($request->name);
+            $bookToReturn = Book::byTitle($request->title)->first();
 
-            return Inertia::render('BookShow', [
-                'books' => $bookToReturn
+            return Inertia::render('BooksIndex', [
+                'books' => $bookToReturn,
+                'authors' => $authors
             ]);
         } else {
-            $bookList = Book::findByAuthorId($request->authorId);
+            $bookList = Book::byAuthorId($request->author_id)->get();
 
-            return Inertia::render('BookShow', [
-                'books' => $bookList
+            return Inertia::render('BooksIndex', [
+                'books' => $bookList,
+                'authors' => $authors
             ]);
         }
     }
@@ -140,7 +142,7 @@ class BooksController extends Controller
      * @param int $id
      * @return Response
      */
-    public function destroy($id)
+    public function destroy(int $id): Response
     {
         $book = Book::find($id);
 
