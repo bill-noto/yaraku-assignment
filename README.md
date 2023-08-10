@@ -32,10 +32,6 @@ $ php artisan serve
 $ npm run dev
 ```
 
-## For Testing Purposes
-
-Link to live server: .
-
 ## Acknowledgements
 
 For the purpose of the interview only. Can be expanded if necessary.
