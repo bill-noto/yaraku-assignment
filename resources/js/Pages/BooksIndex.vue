@@ -33,16 +33,25 @@ export default defineComponent({
         format(param) {
             return moment(String(param)).format('DD/MM/YYYY LT')
         },
-        delete_book(id) {
+        deleteBook(id) {
             if (confirm('Are you sure you want to delete this book?')) {
                 this.$inertia.delete(`/books/${id}`);
             }
         },
-        expand_book(id) {
+        addBook() {
+            this.$inertia.get(`/books/create`);
+        },
+        expandBook(id) {
             this.$inertia.get(`/books/${id}`);
         },
-        edit_book(id) {
+        editBook(id) {
             this.$inertia.get(`/books/edit/${id}`);
+        },
+        submit() {
+            this.form.post('/books/search');
+        },
+        refreshPage() {
+            this.$inertia.get('/');
         }
     }
 })
@@ -61,11 +70,15 @@ export default defineComponent({
                            class="w-full h-12 p-1">
                     <label for="author">Author to search for:</label>
                     <select class="w-full h-12 p-1" v-model="this.form.author_id" name="author" id="author">
-                        <option v-for="author of authors" value="{{author.id}}">{{ author.name }}</option>
+                        <option v-for="author of authors" :value=author.id>{{ author.name }}</option>
                     </select>
                     <button type="submit"
                             class="inline-flex text-md transition-colors duration-200 focus:ring-2 focus:ring-offset-2 focus:ring-current focus:outline-none rounded-md text-white bg-blue-500 hover:bg-blue-700 px-4 py-2 w-1/3 mx-auto my-4">
                         Submit
+                    </button>
+                    <button class="inline-flex text-md transition-colors duration-200 focus:ring-2 focus:ring-offset-2 focus:ring-current focus:outline-none rounded-md text-white bg-blue-500 hover:bg-blue-700 px-4 py-2 w-1/3 mx-auto my-4" type="button"
+                            @click="refreshPage()">
+                        Refresh Page
                     </button>
                 </form>
             </div>
@@ -83,19 +96,23 @@ export default defineComponent({
                     <td class="border border-black">{{ book.title }}</td>
                     <td class="border border-black">{{ book.author.name }}</td>
                     <td class="border border-black flex justify-around">
-                        <button title="Expand Book" @click="expand_book(book.id)">
+                        <button title="Expand Book" @click="expandBook(book.id)">
                             <font-awesome-icon icon="fa-solid fa-eye"/>
                         </button>
-                        <button title="Edit Book" @click="edit_book(book.id)">
+                        <button title="Edit Book" @click="editBook(book.id)">
                             <font-awesome-icon icon="fa-solid fa-edit"/>
                         </button>
-                        <button title="Delete Book" @click="delete_book(book.id)">
+                        <button title="Delete Book" @click="deleteBook(book.id)">
                             <font-awesome-icon icon="fa-solid fa-trash"/>
                         </button>
                     </td>
                 </tr>
                 </tbody>
             </table>
+            <button class="inline-flex text-md transition-colors duration-200 focus:ring-2 focus:ring-offset-2 focus:ring-current focus:outline-none rounded-md text-white bg-blue-500 hover:bg-blue-700 px-4 py-2 w-1/8 mx-auto my-4" type="button"
+                    @click="addBook()">
+                Add Book
+            </button>
         </div>
     </div>
 </template>
